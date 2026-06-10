@@ -1,0 +1,11 @@
+*{background-color: pink;
+}
+
+img {
+   transition:transform 10s linear 3s;
+    
+}
+img:hover{
+    border-style: groove;
+    
+}
