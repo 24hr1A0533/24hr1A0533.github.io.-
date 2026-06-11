@@ -1,0 +1,11 @@
+body{
+    height: 10cm;
+    background:linear-gradient(32deg,RED,BLACK,BLUE,VIOLET,PURPLE);
+}
+body{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    justify-content: space-evenly;
+    flex:wrap;
+}
