@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #chocolate{
+            width: 15cm;
+            height: 10cm;
+            background-color:lavender;
+            border-style: double;
+            border-width: 1cm;
+            border-radius: 25px;
+        
+        }
+    </style>
+</head>
+<body>
+    <div id="chocolate"></div>
+    mouse over the space
+    <script>
+        const candy =document.getElementById("chocolate");
+        candy.addEventListener("mouseover",function()
+    {
+        candy.style.backgroundColor="chocolate";
+        candy.innerText="Dark Fantasy";
+    });
+    candy.addEventListener("mouseout",function()
+    {
+        candy.style.backgroundColor="lavender";
+        candy.innerText="Dairy Milk";
+    });
+
+    </script>
+</body>
+</html>

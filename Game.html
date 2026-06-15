@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Reflex Rush</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+
+  body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #4facfe, #38d39f, #2c6e49);
+    overflow: hidden;
+  }
+
+  .game-container {
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid #ffffff;
+    border-radius: 20px;
+    padding: 30px 40px;
+    text-align: center;
+    color: white;
+    width: 420px;
+    box-shadow: 0 0 30px rgba(20, 120, 90, 0.6);
+    backdrop-filter: blur(6px);
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+    opacity: 0.9;
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .heart-display {
+    font-size: 80px;
+    margin: 20px 0;
+    transition: transform 0.15s ease;
+  }
+
+  .arrow-symbol {
+    font-size: 90px;
+    margin: 20px 0;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease;
+  }
+
+  .message {
+    font-size: 18px;
+    min-height: 28px;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+
+  .timer-bar-container {
+    width: 100%;
+    height: 14px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .timer-bar {
+    height: 100%;
+    background: #ffeb3b;
+    width: 100%;
+    transition: width 0.05s linear;
+    border-radius: 10px;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 60px 60px 60px;
+    grid-template-rows: 60px 60px;
+    gap: 8px;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+
+  .controls button {
+    font-size: 26px;
+    border: none;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #2c6e49;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.1s ease;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+  }
+
+  .controls button:active,
+  .controls button.pressed {
+    transform: translateY(3px) scale(0.95);
+    background: #cdf5e6;
+    box-shadow: none;
+  }
+
+  #btn-up { grid-column: 2; grid-row: 1; }
+  #btn-left { grid-column: 1; grid-row: 2; }
+  #btn-down { grid-column: 2; grid-row: 2; }
+  #btn-right { grid-column: 3; grid-row: 2; }
+
+  .correct-flash {
+    animation: pulseGreen 0.3s ease;
+  }
+
+  .wrong-flash {
+    animation: pulseRed 0.3s ease;
+  }
+
+  @keyframes pulseGreen {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); color: #7CFC00; }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes pulseRed {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); color: #ff4444; }
+    100% { transform: scale(1); }
+  }
+
+  .start-btn, .restart-btn {
+    background: #ffffff;
+    color: #2c6e49;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: transform 0.1s ease;
+  }
+
+  .start-btn:active, .restart-btn:active {
+    transform: translateY(3px);
+    box-shadow: none;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .instructions {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    opacity: 0.9;
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+  <h1>Student Reflex Rush 📚</h1>
+  <p class="subtitle">Sharpen your reflexes before the bell rings!</p>
+
+  <div id="start-screen">
+    <div class="heart-display">🎓</div>
+    <p class="instructions">
+      An arrow will appear. Press the matching arrow key (or tap a button)
+      before the timer runs out. Get it right and you earn study points.
+      Get it wrong or too slow, and you lose a pencil.
+      Survive with 3 pencils!
+    </p>
+    <button class="start-btn" onclick="startGame()">Start Studying</button>
+  </div>
+
+  <div id="game-screen" class="hidden">
+    <div class="stats">
+      <span>Score: <span id="score">0</span></span>
+      <span id="lives">✏️✏️✏️</span>
+    </div>
+
+    <div class="arrow-symbol" id="arrow-symbol">❓</div>
+
+    <div class="message" id="message">Get ready...</div>
+
+    <div class="timer-bar-container">
+      <div class="timer-bar" id="timer-bar"></div>
+    </div>
+
+    <div class="controls">
+      <button id="btn-up" onclick="handleInput('up')">⬆</button>
+      <button id="btn-left" onclick="handleInput('left')">⬅</button>
+      <button id="btn-down" onclick="handleInput('down')">⬇</button>
+      <button id="btn-right" onclick="handleInput('right')">➡</button>
+    </div>
+  </div>
+
+  <div id="game-over-screen" class="hidden">
+    <div class="heart-display">📕</div>
+    <h2 id="final-score-text"></h2>
+    <button class="restart-btn" onclick="restartGame()">Try Again</button>
+  </div>
+</div>
+
+<script>
+  const arrows = {
+    up: '⬆',
+    down: '⬇',
+    left: '⬅',
+    right: '➡'
+  };
+
+  let score = 0;
+  let lives = 3;
+  let currentArrow = null;
+  let timerInterval = null;
+  let timeLeft = 100;
+  let timeLimit = 100;
+  let roundActive = false;
+  let speedDecrease = 4;
+
+  const arrowSymbolEl = document.getElementById('arrow-symbol');
+  const messageEl = document.getElementById('message');
+  const scoreEl = document.getElementById('score');
+  const livesEl = document.getElementById('lives');
+  const timerBarEl = document.getElementById('timer-bar');
+
+  const startScreen = document.getElementById('start-screen');
+  const gameScreen = document.getElementById('game-screen');
+  const gameOverScreen = document.getElementById('game-over-screen');
+
+  function startGame() {
+    score = 0;
+    lives = 3;
+    timeLimit = 100;
+    speedDecrease = 4;
+    updateScore();
+    updateLives();
+
+    startScreen.classList.add('hidden');
+    gameOverScreen.classList.add('hidden');
+    gameScreen.classList.remove('hidden');
+
+    nextRound();
+  }
+
+  function restartGame() {
+    startGame();
+  }
+
+  function nextRound() {
+    if (lives <= 0) {
+      endGame();
+      return;
+    }
+
+    const directions = Object.keys(arrows);
+    currentArrow = directions[Math.floor(Math.random() * directions.length)];
+    arrowSymbolEl.textContent = arrows[currentArrow];
+    messageEl.textContent = "Now!";
+    messageEl.style.color = "white";
+
+    timeLeft = timeLimit;
+    timerBarEl.style.width = '100%';
+    roundActive = true;
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      timeLeft -= 1;
+      let pct = (timeLeft / timeLimit) * 100;
+      timerBarEl.style.width = pct + '%';
+
+      if (timeLeft <= 30) {
+        timerBarEl.style.background = '#ff4444';
+      } else {
+        timerBarEl.style.background = '#ffeb3b';
+      }
+
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        if (roundActive) {
+          loseLife("Too slow! 📕");
+        }
+      }
+    }, timeLimit / 100);
+  }
+
+  function handleInput(direction) {
+    if (!roundActive) return;
+
+    flashButton(direction);
+
+    if (direction === currentArrow) {
+      clearInterval(timerInterval);
+      roundActive = false;
+      score += 1;
+      updateScore();
+      messageEl.textContent = "Correct! Great focus 📚";
+      messageEl.style.color = "#7CFC00";
+      arrowSymbolEl.classList.add('correct-flash');
+
+      // increase difficulty slightly
+      if (timeLimit > 35) {
+        timeLimit -= speedDecrease;
+      }
+
+      setTimeout(() => {
+        arrowSymbolEl.classList.remove('correct-flash');
+        nextRound();
+      }, 400);
+    } else {
+      clearInterval(timerInterval);
+      roundActive = false;
+      arrowSymbolEl.classList.add('wrong-flash');
+      setTimeout(() => arrowSymbolEl.classList.remove('wrong-flash'), 400);
+      loseLife("Wrong answer! 📕");
+    }
+  }
+
+  function loseLife(msg) {
+    roundActive = false;
+    lives -= 1;
+    updateLives();
+    messageEl.textContent = msg;
+    messageEl.style.color = "#ff4444";
+
+    setTimeout(() => {
+      if (lives <= 0) {
+        endGame();
+      } else {
+        nextRound();
+      }
+    }, 700);
+  }
+
+  function updateScore() {
+    scoreEl.textContent = score;
+  }
+
+  function updateLives() {
+    let pencils = '';
+    for (let i = 0; i < lives; i++) pencils += '✏️';
+    for (let i = lives; i < 3; i++) pencils += '🪶';
+    livesEl.textContent = pencils;
+  }
+
+  function endGame() {
+    clearInterval(timerInterval);
+    gameScreen.classList.add('hidden');
+    gameOverScreen.classList.remove('hidden');
+    document.getElementById('final-score-text').textContent =
+      "Class dismissed! Your score: " + score;
+  }
+
+  function flashButton(direction) {
+    const btn = document.getElementById('btn-' + direction);
+    if (!btn) return;
+    btn.classList.add('pressed');
+    setTimeout(() => btn.classList.remove('pressed'), 120);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        handleInput('up');
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        handleInput('down');
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        handleInput('left');
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        handleInput('right');
+        break;
+    }
+  });
+</script>
+
+</body>
+</html>
